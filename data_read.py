@@ -35,8 +35,6 @@ def mkdir_classes(path_save:Path,classes:list):
 
 def unpackFiles(train_or_test:str,classes:list,father_path:Path):
 
-
-
     saving_path = Path("data") / train_or_test
     mkdir_classes(saving_path, classes)
 
@@ -49,7 +47,8 @@ if __name__=='__main__':
     father_path = Path("data") / "CIFAR_100/"
     file = father_path / Path("cifar-100-python") / "meta"
     classes = readClasses(file, True)
-    unpackFiles("test",classes,father_path)
+    unpackFiles("train",classes,father_path)
+    unpackFiles("test", classes, father_path)
 
 def testFunction():
     #just to test reading data
