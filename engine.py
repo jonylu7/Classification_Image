@@ -8,8 +8,7 @@ def train_step(model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data
 
     model.train()
     train_loss,train_acc=0,0
-
-    for batch,(X,y) in train_data:
+    for batch,(X,y) in enumerate(train_data):
         print(f"Train_Batch: {batch}")
         X,y=X.to(device),y.to(device)
 
