@@ -16,12 +16,12 @@ def main():
     batch_size=32
     num_workers=torch.cpu.device_count()
     train_data,test_data,class_names=createDataLoaders(train_dir,test_dir,transform,batch_size,num_workers)
-    if torch.cuda:
-        device=torch.cuda
+    if torch.cuda.is_available():
+        device=torch.device("cuda:3")
     else:
         device=torch.device("mps")
 
-    model=CNNModel_A(in_features=3,hiddent_units=64,out_features=10)
+    model=CNNModel_A(in_features=3,hiddent_units=32,out_features=10)
     learningRate=0.01
     optimizer=torch.optim.SGD(model.parameters(),lr=learningRate)
     loss_fn=torch.nn.L1Loss()
