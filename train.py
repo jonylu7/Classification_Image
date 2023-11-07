@@ -16,7 +16,7 @@ def main():
     batch_size=32
     num_workers=torch.cpu.device_count()
     train_data,test_data,class_names=createDataLoaders(train_dir,test_dir,transform,batch_size,num_workers)
-    if torch.cuda:
+    if torch.cuda.is_available():
         device=torch.cuda
     else:
         device=torch.device("mps")
