@@ -69,4 +69,10 @@ class VGG(nn.Module):
     def forward(self,x):
         return x
 
+class EasyConv(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x):
+        return x
 

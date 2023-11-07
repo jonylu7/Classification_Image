@@ -21,11 +21,11 @@ def main():
     else:
         device=torch.device("mps")
 
-    model=CNNModel_A()
+    model=CNNModel_A(in_features=3,hiddent_units=64,out_features=10)
     learningRate=0.01
     optimizer=torch.optim.SGD(model.parameters(),lr=learningRate)
     loss_fn=torch.nn.L1Loss()
-    train(5,optimizer,loss_fn)
+    train(5,model,optimizer,loss_fn,train_data,test_data,device)
 
 
 
@@ -33,4 +33,4 @@ def main():
 
 
 if __name__=='__main__':
-    main2()
+    main()
