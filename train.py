@@ -2,7 +2,7 @@ from pathlib import Path
 from data_setup import createDataLoaders
 from torchvision import transforms
 import torch
-from model_builder import CNNModel_A
+from model.VGG import CNNModel_A
 from engine import train
 
 def main2():
