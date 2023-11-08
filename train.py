@@ -14,14 +14,14 @@ def main():
     test_dir = Path("data") / "test"
     transform=transforms.Compose([transforms.Resize(32),transforms.ToTensor()])
     batch_size=32
-    num_workers=torch.cpu.device_count()
+    num_workers=torch.cuda.device_count()
     train_data,test_data,class_names=createDataLoaders(train_dir,test_dir,transform,batch_size,num_workers)
-    if torch.cuda.is_available():
+    if torch.cuda:
         device=torch.device("cuda:3")
     else:
         device=torch.device("mps")
 
-    model=CNNModel_A(in_features=3,hiddent_units=32,out_features=10)
+    model=CNNModel_A(in_features=3,hiddent_units=32,out_features=10).to(device)
     learningRate=0.01
     optimizer=torch.optim.SGD(model.parameters(),lr=learningRate)
     loss_fn=torch.nn.L1Loss()

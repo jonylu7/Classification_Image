@@ -29,7 +29,7 @@ class CNNModel_A(nn.Module):
                                         nn.ReLU(),
                                         nn.MaxPool2d(3, 1, 1))
 
-        self.flatten=nn.Flatten()
+        self.flatten=nn.Flatten(1,1)
         self.FC1=nn.Sequential(nn.Linear(hiddent_units*32,hiddent_units*64),
                                    nn.ReLU(), nn.Dropout(0.5))
         self.FC2=nn.Sequential(nn.Linear(in_features=hiddent_units*64,out_features=hiddent_units*64),
