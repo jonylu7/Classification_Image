@@ -27,11 +27,11 @@ class FCLayerWithDropOut():
         ]
 
 class VGGModel_11(nn.Module):
-    def __init__(self,in_features:int,image_resolution:int,out_features:int,Architechture=((1, 64), (1, 128), (2, 256), (2, 512), (2, 512))):
+    def __init__(self,in_features:int,image_resolution:int,out_features:int,Architecture=((1, 64), (1, 128), (2, 256), (2, 512), (2, 512))):
         super().__init__()
         self.block=[]
         self.in_featues=in_features
-        for (num_convs,num_channels) in Architechture:
+        for (num_convs,num_channels) in Architecture:
             self.out_features=num_channels
             self.block.append(nn.Sequential(*VGGBlockA(num_convs,self.in_featues,self.out_features,3,1,1,2,2).block_list))
             self.in_featues=num_channels
@@ -39,7 +39,9 @@ class VGGModel_11(nn.Module):
 
         self.block=nn.Sequential(*self.block)
         self.flatten=nn.Flatten()
-        self.FC1=nn.Sequential(*FCLayerWithDropOut(2048,4096,0.5).layer_list)
+        fc1_in=out_features * (image_resolution//(2**len(Architecture))) * (image_resolution//(2**len(Architecture)))
+        fc1_in=2048
+        self.FC1=nn.Sequential(*FCLayerWithDropOut(fc1_in,4096,0.5).layer_list)
         self.FC2=nn.Sequential(*FCLayerWithDropOut(4096,4096,0.5).layer_list)
         self.FC3=nn.Linear(4096,10)
 

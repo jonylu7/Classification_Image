@@ -24,7 +24,7 @@ def main():
     model=VGGModel_11(in_features=3,image_resolution=64,out_features=10).to(device)
     learningRate=0.01
     optimizer=torch.optim.SGD(model.parameters(),lr=learningRate)
-    loss_fn=torch.nn.MSELoss()
+    loss_fn=torch.nn.CrossEntropyLoss()
 
     train(5,model,loss_fn,optimizer,train_data,test_data,device)
 
