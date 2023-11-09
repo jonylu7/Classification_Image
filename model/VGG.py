@@ -35,7 +35,7 @@ class VGGModel_11(nn.Module):
             self.out_features=num_channels
             self.block.append(nn.Sequential(*VGGBlockA(num_convs,self.in_featues,self.out_features,3,1,1,2,2).block_list))
             self.in_featues=num_channels
-        print(self.block)
+
 
         self.block=nn.Sequential(*self.block)
         self.flatten=nn.Flatten()

@@ -9,21 +9,22 @@ def train_step(model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data
     model.train()
     train_loss,train_acc=0,0
     for batch,(X,y) in enumerate(train_data):
+
         print(f"Train_Batch: {batch}")
         X,y=X.to(device),y.to(device)
         y_pred=model(X)
+
         loss = loss_fn(y_pred,y)
-        train_loss+=loss.item()
+        train_loss+=loss
 
         optimizer.zero_grad()
         loss.backward()
-
         optimizer.step()
-        ## waiting to be implemant
-        y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
-        train_acc += (y == y_pred_class).sum().item() / len(y_pred)
-    train_loss = train_loss / len(train_data)
-    train_acc = train_acc / len(train_data)
+
+        ## calculate accuracy
+
+
+
 
     return train_loss,train_acc
 
@@ -33,17 +34,15 @@ def train_step(model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data
 def test_step(model:nn.Module,loss_fn:torch.nn,test_data:DataLoader,device:torch.device):
     model.eval()
     test_loss,test_acc=0,0
-    with torch.inference_mode():
-        for batch,(X,y)in test_data:
+    with torch.no_grad():
+        for batch,(X,y)in enumerate(test_data):
             print(f"Test_Batch: {batch}")
             X,y=X.to(device),y.to(device)
             y_pred_test=model(X)
             test_loss+=loss_fn(y_pred_test,y)
             ## waiting to be implemant
-            test_acc+=1
-
-
-    return test_loss,test_acc
+            
+            return test_loss,test_acc
 
 
 def train(epoches:int,model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data:DataLoader,test_data:DataLoader,device:torch.device):

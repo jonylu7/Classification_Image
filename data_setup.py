@@ -11,6 +11,7 @@ def createDataLoaders(train_dir:str,test_dir:str,transform:transforms.Compose,ba
 
 
     class_names=train_data_folder.classes
+    print(len(class_names))
 
     return train_data,test_data,class_names
 

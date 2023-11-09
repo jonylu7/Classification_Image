@@ -13,7 +13,7 @@ def main():
     train_dir=Path("data")/"train"
     test_dir = Path("data") / "test"
     transform=transforms.Compose([transforms.Resize(64),transforms.ToTensor()])
-    batch_size=32
+    batch_size=256
     num_workers=torch.cuda.device_count()
     train_data,test_data,class_names=createDataLoaders(train_dir,test_dir,transform,batch_size,num_workers)
     if torch.cuda.is_available():
@@ -21,7 +21,10 @@ def main():
     else:
         device=torch.device("cpu")
 
-    model=VGGModel_11(in_features=3,image_resolution=64,out_features=10).to(device)
+   # device=torch.device("cpu")
+
+
+    model=VGGModel_11(in_features=3,image_resolution=64,out_features=len(class_names)).to(device)
    # model=TinyVGG(input_shape=3,output_shape=10,hidden_units=10).to(device)
     learningRate=0.01
     optimizer=torch.optim.SGD(model.parameters(),lr=learningRate)
