@@ -2,7 +2,7 @@ from pathlib import Path
 from data_setup import createDataLoaders
 from torchvision import transforms
 import torch
-from model.VGG import VGGModel_11
+from model.VGG import VGGModel_11,TinyVGG
 from engine import train
 
 def main2():
@@ -19,9 +19,10 @@ def main():
     if torch.cuda.is_available():
         device=torch.device("cuda:3")
     else:
-        device=torch.device("mps")
+        device=torch.device("cpu")
 
     model=VGGModel_11(in_features=3,image_resolution=64,out_features=10).to(device)
+   # model=TinyVGG(input_shape=3,output_shape=10,hidden_units=10).to(device)
     learningRate=0.01
     optimizer=torch.optim.SGD(model.parameters(),lr=learningRate)
     loss_fn=torch.nn.CrossEntropyLoss()

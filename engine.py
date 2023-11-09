@@ -12,7 +12,7 @@ def train_step(model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data
         print(f"Train_Batch: {batch}")
         X,y=X.to(device),y.to(device)
         y_pred=model(X)
-        loss = loss_fn(y, y_pred)
+        loss = loss_fn(y_pred,y)
         train_loss+=loss.item()
 
         optimizer.zero_grad()
@@ -20,7 +20,10 @@ def train_step(model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data
 
         optimizer.step()
         ## waiting to be implemant
-        train_acc+=1
+        y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
+        train_acc += (y == y_pred_class).sum().item() / len(y_pred)
+    train_loss = train_loss / len(train_data)
+    train_acc = train_acc / len(train_data)
 
     return train_loss,train_acc
 
