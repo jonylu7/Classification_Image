@@ -1,47 +1,50 @@
 from torch import nn
+from typing import Tuple
 
-class CNNModel_A(nn.Module):
-    def __init__(self,in_features:int,hiddent_units:int,out_features:int):
+class Conv2DBlock():
+    def __init__(self,input_channels,output_channels,kernel_size,stride,padding):
+
+        self.block_list=[nn.Conv2d(input_channels,output_channels,kernel_size,stride,padding),
+        nn.ReLU()]
+
+class VGGBlockA():
+    def __init__(self,number_of_convs,input_channels,output_channels,kernel,stride,padding,maxpool_kernel_size,maxpool_stride):
+
+        self.block_list=[]
+        self.input_channels=input_channels
+        self.output_channels=output_channels
+        for _ in range(number_of_convs):
+            self.block_list.extend(Conv2DBlock(self.input_channels,self.output_channels,kernel,stride,padding).block_list)
+            self.input_channels=self.output_channels
+        self.block_list.append(nn.MaxPool2d(maxpool_kernel_size,maxpool_stride))
+
+class FCLayerWithDropOut():
+    def __init__(self,input_features,output_features,DropOutRate):
+        self.layer_list=[
+            nn.Linear(input_features,output_features),
+            nn.ReLU(),
+            nn.Dropout(DropOutRate)
+        ]
+
+class VGGModel_11(nn.Module):
+    def __init__(self,in_features:int,image_resolution:int,out_features:int,Architechture=((1, 64), (1, 128), (2, 256), (2, 512), (2, 512))):
         super().__init__()
-        self.CNNBlock_1=nn.Sequential(nn.Conv2d(in_features,hiddent_units,3,1,1),
-                                      nn.ReLU(),
-                                   nn.MaxPool2d(3,1,1)
-                                   )
-        self.CNNBlock_2=nn.Sequential(nn.Conv2d(hiddent_units,hiddent_units*2,3,1,1),
-                                      nn.ReLU(),
-                                   nn.MaxPool2d(3,1,1))
+        self.block=[]
+        self.in_featues=in_features
+        for (num_convs,num_channels) in Architechture:
+            self.out_features=num_channels
+            self.block.append(nn.Sequential(*VGGBlockA(num_convs,self.in_featues,self.out_features,3,1,1,2,2).block_list))
+            self.in_featues=num_channels
+        print(self.block)
 
-        self.CNNBlock_3 = nn.Sequential(nn.Conv2d(hiddent_units*2, hiddent_units*2, 3, 1, 1),
-                                        nn.ReLU(),
-                                        nn.Conv2d(hiddent_units * 2, hiddent_units * 4, 3, 1, 1),
-                                        nn.ReLU(),
-                                        nn.MaxPool2d(3, 1, 1))
+        self.block=nn.Sequential(*self.block)
+        self.flatten=nn.Flatten()
+        self.FC1=nn.Sequential(*FCLayerWithDropOut(2048,4096,0.5).layer_list)
+        self.FC2=nn.Sequential(*FCLayerWithDropOut(4096,4096,0.5).layer_list)
+        self.FC3=nn.Linear(4096,10)
 
-        self.CNNBlock_4 = nn.Sequential(nn.Conv2d(hiddent_units*4, hiddent_units*8, 3, 1, 1),
-                                        nn.ReLU(),
-                                        nn.Conv2d(hiddent_units * 8, hiddent_units * 8, 3, 1, 1),
-                                        nn.ReLU(),
-                                        nn.MaxPool2d(3, 1, 1))
-
-        self.CNNBlock_5 = nn.Sequential(nn.Conv2d(hiddent_units*8, hiddent_units*8, 3, 1, 1),
-                                        nn.ReLU(),
-                                        nn.Conv2d(hiddent_units*8, hiddent_units*8, 3, 1, 1),
-                                        nn.ReLU(),
-                                        nn.MaxPool2d(3, 1, 1))
-
-        self.flatten=nn.Flatten(1,1)
-        self.FC1=nn.Sequential(nn.Linear(hiddent_units*32,hiddent_units*64),
-                                   nn.ReLU(), nn.Dropout(0.5))
-        self.FC2=nn.Sequential(nn.Linear(in_features=hiddent_units*64,out_features=hiddent_units*64),
-                                   nn.ReLU(), nn.Dropout(0.5))
-        self.FC3 = nn.Linear(in_features=hiddent_units*64,out_features=out_features)
-        ##self.softmax=nn.Softmax2d()
     def forward(self,x):
-        x=self.CNNBlock_1(x)
-        x=self.CNNBlock_2(x)
-        x = self.CNNBlock_3(x)
-        x = self.CNNBlock_4(x)
-        x = self.CNNBlock_5(x)
+        x=self.block(x)
         x=self.flatten(x)
         x=self.FC1(x)
         x = self.FC2(x)
