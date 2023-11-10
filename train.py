@@ -13,19 +13,24 @@ def main():
     train_dir=Path("data")/"train"
     test_dir = Path("data") / "test"
     transform=transforms.Compose([transforms.Resize(64),transforms.ToTensor()])
+
     batch_size=256
+    in_shape=3
+    image_resolution=64
+    out_shape=20
     num_workers=torch.cuda.device_count()
+
     train_data,test_data,class_names=createDataLoaders(train_dir,test_dir,transform,batch_size,num_workers)
     if torch.cuda.is_available():
         device=torch.device("cuda:3")
     else:
-        device=torch.device("cpu")
+        device=torch.device("mps")
 
    # device=torch.device("cpu")
 
 
-    model=VGGModel_11(in_features=3,image_resolution=64,out_features=len(class_names)).to(device)
-   # model=TinyVGG(input_shape=3,output_shape=10,hidden_units=10).to(device)
+    model=VGGModel_11(in_features=in_shape,image_resolution=image_resolution,out_features=out_shape).to(device)
+    #model=TinyVGG(input_shape=3,output_shape=20,hidden_units=10).to(device)
     learningRate=0.01
     optimizer=torch.optim.SGD(model.parameters(),lr=learningRate)
     loss_fn=torch.nn.CrossEntropyLoss()

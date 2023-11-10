@@ -22,13 +22,13 @@ def train_step(model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data
         optimizer.step()
 
         ## calculate accuracy
+        y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
+        train_acc += (y == y_pred_class).sum().item() / len(y_pred)
 
-
-
+    train_loss = train_loss / len(train_data)
+    train_acc = train_acc / len(train_data)
 
     return train_loss,train_acc
-
-
 
 
 def test_step(model:nn.Module,loss_fn:torch.nn,test_data:DataLoader,device:torch.device):
@@ -41,8 +41,14 @@ def test_step(model:nn.Module,loss_fn:torch.nn,test_data:DataLoader,device:torch
             y_pred_test=model(X)
             test_loss+=loss_fn(y_pred_test,y)
             ## waiting to be implemant
-            
-            return test_loss,test_acc
+
+            test_pred_labels = y_pred_test.argmax(dim=1)
+            test_acc += ((y == test_pred_labels).sum().item() / len(test_pred_labels))
+
+        test_loss = test_loss / len(test_data)
+        test_acc = test_acc / len(test_data)
+
+    return test_loss,test_acc
 
 
 def train(epoches:int,model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data:DataLoader,test_data:DataLoader,device:torch.device):

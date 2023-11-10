@@ -43,7 +43,7 @@ class VGGModel_11(nn.Module):
         fc1_in=2048
         self.FC1=nn.Sequential(*FCLayerWithDropOut(fc1_in,4096,0.5).layer_list)
         self.FC2=nn.Sequential(*FCLayerWithDropOut(4096,4096,0.5).layer_list)
-        self.FC3=nn.Linear(4096,10)
+        self.FC3=nn.Linear(4096,out_features)
 
     def forward(self,x):
         x=self.block(x)
