@@ -2,6 +2,7 @@ from tqdm import tqdm
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 
 
 def train_step(model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data:DataLoader,device:torch.device):
@@ -51,12 +52,34 @@ def test_step(model:nn.Module,loss_fn:torch.nn,test_data:DataLoader,device:torch
     return test_loss,test_acc
 
 
-def train(epoches:int,model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data:DataLoader,test_data:DataLoader,device:torch.device):
+def train(epoches:int,model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data:DataLoader,test_data:DataLoader,device:torch.device,writer:SummaryWriter):
+
+    results={
+        "train_loss":[],
+        "test_loss":[],
+        "train_acc":[],
+        "test_acc":[]
+    }
 
     for epoch in tqdm(range(epoches)):
         print(f"Epoch:{epoch}:")
         train_loss,train_acc=train_step(model,loss_fn,optimizer,train_data,device)
         test_loss,test_acc=test_step(model,loss_fn,test_data,device)
+
         print(f"Train_loss:{train_loss} | Test_loss:{test_loss} | Train_acc:{train_acc} | Test_acc:{test_acc}")
+
+        results["train_loss"].append(train_loss)
+        results["test_loss"].append(test_loss)
+        results["train_acc"].append(train_acc)
+        results["test_loss"].append(test_acc)
+
+        if writer:
+            writer.add_scalar(tag="Train/Loss",scalar_value=train_loss,global_step=epoch)
+            writer.add_scalar(tag="Train/Acc", scalar_value=train_acc, global_step=epoch)
+            writer.add_scalar(tag="Test/Loss", scalar_value=test_loss, global_step=epoch)
+            writer.add_scalar(tag="Test/Acc", scalar_value=test_acc, global_step=epoch)
+            writer.close()
+
+    return results
 
 
