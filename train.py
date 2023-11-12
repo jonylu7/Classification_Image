@@ -16,6 +16,7 @@ def main():
     transform=transforms.Compose([transforms.Resize(64),transforms.ToTensor()])
 
     batch_size=256
+    weight_decay=0.0005
     in_shape=3
     image_resolution=64
     out_shape=20
@@ -33,8 +34,8 @@ def main():
 
     model=VGGModel_11(in_features=in_shape,image_resolution=image_resolution,out_features=out_shape).to(device)
     #model=TinyVGG(input_shape=3,output_shape=20,hidden_units=10).to(device)
-    learningRate=0.01
-    optimizer=torch.optim.SGD(model.parameters(),lr=learningRate)
+    learningRate=0.005
+    optimizer=torch.optim.SGD(model.parameters(),lr=learningRate,weight_decay=weight_decay)
     loss_fn=torch.nn.CrossEntropyLoss()
     writer=SummaryWriter()
     result=train(epoches,model,loss_fn,optimizer,train_data,test_data,device,writer)
