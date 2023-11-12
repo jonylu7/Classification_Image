@@ -10,8 +10,8 @@ def train_step(model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,train_data
     model.train()
     train_loss,train_acc=0,0
     for batch,(X,y) in enumerate(train_data):
-
-        print(f"Train_Batch: {batch}")
+        if batch%10==0:
+            print(f"Train_Batch: {batch}")
         X,y=X.to(device),y.to(device)
         y_pred=model(X)
 
@@ -37,7 +37,8 @@ def test_step(model:nn.Module,loss_fn:torch.nn,test_data:DataLoader,device:torch
     test_loss,test_acc=0,0
     with torch.no_grad():
         for batch,(X,y)in enumerate(test_data):
-            print(f"Test_Batch: {batch}")
+            if(batch%10==0):
+                print(f"Test_Batch: {batch}")
             X,y=X.to(device),y.to(device)
             y_pred_test=model(X)
             test_loss+=loss_fn(y_pred_test,y)
