@@ -67,7 +67,7 @@ def train(epoches:int,model:nn.Module,loss_fn:torch.nn,optimizer:torch.optim,tra
         train_loss,train_acc=train_step(model,loss_fn,optimizer,train_data,device)
         test_loss,test_acc=test_step(model,loss_fn,test_data,device)
 
-        print(f"Train_loss:{train_loss} | Test_loss:{test_loss} | Train_acc:{train_acc} | Test_acc:{test_acc}")
+        print(f"Train_loss:{train_loss:.4f} | Test_loss:{test_loss:.4f} | Train_acc:{train_acc:.4f} | Test_acc:{test_acc:.4f}")
 
         results["train_loss"].append(train_loss)
         results["test_loss"].append(test_loss)

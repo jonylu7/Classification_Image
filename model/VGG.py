@@ -39,8 +39,7 @@ class VGGModel_11(nn.Module):
 
         self.block=nn.Sequential(*self.block)
         self.flatten=nn.Flatten()
-        fc1_in=out_features * (image_resolution//(2**len(Architecture))) * (image_resolution//(2**len(Architecture)))
-        fc1_in=2048
+        fc1_in=self.out_features * (image_resolution//(2**len(Architecture))) * (image_resolution//(2**len(Architecture)))
         self.FC1=nn.Sequential(*FCLayerWithDropOut(fc1_in,4096,0.5).layer_list)
         self.FC2=nn.Sequential(*FCLayerWithDropOut(4096,4096,0.5).layer_list)
         self.FC3=nn.Linear(4096,out_features)
@@ -48,6 +47,7 @@ class VGGModel_11(nn.Module):
     def forward(self,x):
         x=self.block(x)
         x=self.flatten(x)
+        #print(x.shape)
         x=self.FC1(x)
         x = self.FC2(x)
         x = self.FC3(x)
