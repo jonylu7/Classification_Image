@@ -1,4 +1,7 @@
 from pathlib import Path
+
+import torchvision.models
+
 from data_setup import createDataLoaders
 from torchvision import transforms,datasets
 import torch
@@ -41,6 +44,7 @@ def main(train_data,test_data,in_shape,image_resolution,out_shape):
    # device=torch.device("cpu")
 
     model=VGGModel_11(in_features=in_shape,image_resolution=image_resolution,out_features=out_shape).to(device)
+    model.apply(torchvision.models.VGG11_Weights)
     #model=TinyVGG(input_shape=3,output_shape=20,hidden_units=10).to(device)
     learningRate=0.0005
     optimizer=torch.optim.SGD(model.parameters(),lr=learningRate,weight_decay=weight_decay,momentum=0.9)
