@@ -29,7 +29,7 @@ def MNISTDatasets():
 def main(train_data,test_data,in_shape,image_resolution,out_shape):
 
     weight_decay=0.0005
-    epoches=10
+    epoches=80
 
 
 
@@ -57,4 +57,4 @@ def main(train_data,test_data,in_shape,image_resolution,out_shape):
 if __name__=='__main__':
     train_data, test_data, class_names = customizeDataSets()
     #train_data, test_data, =MNISTDatasets()
-    main(train_data, test_data)
+    main(train_data, test_data,3,224,20)
