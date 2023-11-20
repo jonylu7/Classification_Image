@@ -5,7 +5,7 @@ class Conv2DBlock():
     def __init__(self,input_channels,output_channels,kernel_size,stride,padding):
 
         self.block_list=[nn.Conv2d(input_channels,output_channels,kernel_size,stride,padding),
-                         nn.BatchNorm2d(output_channels)
+                         nn.BatchNorm2d(output_channels),
         nn.ReLU()]
 
 class VGGBlockA():
