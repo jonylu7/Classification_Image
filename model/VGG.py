@@ -5,6 +5,7 @@ class Conv2DBlock():
     def __init__(self,input_channels,output_channels,kernel_size,stride,padding):
 
         self.block_list=[nn.Conv2d(input_channels,output_channels,kernel_size,stride,padding),
+                         nn.BatchNorm2d(output_channels)
         nn.ReLU()]
 
 class VGGBlockA():
@@ -43,6 +44,7 @@ class VGGModel_11(nn.Module):
         self.FC1=nn.Sequential(*FCLayerWithDropOut(fc1_in,4096,0.5).layer_list)
         self.FC2=nn.Sequential(*FCLayerWithDropOut(4096,4096,0.5).layer_list)
         self.FC3=nn.Linear(4096,out_features)
+        self.softmax=nn.Softmax(dim=1)
 
     def forward(self,x):
         x=self.block(x)
@@ -51,7 +53,7 @@ class VGGModel_11(nn.Module):
         x=self.FC1(x)
         x = self.FC2(x)
         x = self.FC3(x)
-        ##x=self.softmax(x)
+        x=self.softmax(x)
         return x
 
 
@@ -65,14 +67,14 @@ class TinyVGG(nn.Module):
                       out_channels=hidden_units,
                       kernel_size=3,
                       stride=1,
-                      padding=0
+                      padding=1
                       ),
             nn.ReLU(),
             nn.Conv2d(in_channels=hidden_units,
                       out_channels=hidden_units,
                       kernel_size=3,
                       stride=1,
-                      padding=0
+                      padding=1
             ),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2,stride=2)
@@ -81,21 +83,21 @@ class TinyVGG(nn.Module):
             nn.Conv2d(in_channels=hidden_units,
                       out_channels=hidden_units,
                       kernel_size=3,
-                      padding=0
+                      padding=1
                       ),
             nn.ReLU(),
             nn.Conv2d(in_channels=hidden_units,
                       out_channels=hidden_units,
                       kernel_size=3,
-                      padding=0
+                      padding=1
             ),
             nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.MaxPool2d(2,2)
         )
 
         self.classifier=nn.Sequential(
             nn.Flatten(),
-            nn.Linear(in_features=hidden_units*13*13,out_features=output_shape)
+            nn.Linear(in_features=hidden_units*(hidden_units//(2**2))*(hidden_units//(2**2)),out_features=output_shape)
         )
 
     def forward(self,x):
